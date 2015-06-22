@@ -4,7 +4,7 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
 
   spec.linker.libraries << 'onig'
 
-  next if build.kind_of? MRuby::CrossBuild or ENV['OS'] == 'Windows_NT'
+  next if ENV['OS'] == 'Windows_NT'
   if build.cc.respond_to? :search_header_path
     next if build.cc.search_header_path 'oniguruma.h'
   end
@@ -61,7 +61,9 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
         'AR' => spec.build.archiver.command }
       _pp 'autotools', oniguruma_dir
       run_command e, './autogen.sh' if File.exists? 'autogen.sh'
-      run_command e, './configure --disable-shared --enable-static'
+      configure_opts = '--disable-shared --enable-static'
+      configure_opts += " --host #{spec.build.host_target} --build #{spec.build.build_target}" if build.kind_of? MRuby::CrossBuild
+      run_command e, "./configure #{configure_opts}"
       run_command e, 'make'
     end
   end
