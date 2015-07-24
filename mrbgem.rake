@@ -62,7 +62,7 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
       _pp 'autotools', oniguruma_dir
       run_command e, './autogen.sh' if File.exists? 'autogen.sh'
       configure_opts = '--disable-shared --enable-static'
-      if build.kind_of? MRuby::CrossBuild
+      if build.kind_of?(MRuby::CrossBuild) && build.host_target && build.build_target
         configure_opts += " --host #{spec.build.host_target} --build #{spec.build.build_target}"
         e['LD'] = "x86_64-w64-mingw32-ld #{spec.build.linker.flags.join(' ')}" if build.host_target == "x86_64-w64-mingw32"
         e['LD'] = "i686-w64-mingw32-ld #{spec.build.linker.flags.join(' ')}" if build.host_target == "i686-w64-mingw32"
